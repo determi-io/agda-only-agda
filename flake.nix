@@ -20,21 +20,24 @@
       let pkgs = import nixpkgs { inherit system; };
       in
       {
-        packages.default = derivation {
+        packages.default = pkgs.stdenv.mkDerivation {
           name = "determi-io-agda-only-agda";
-          builder = "${pkgs.bash}/bin/bash";
-          args = [ ./builder.sh ];
-          STDLIB_ROOT = ./.;
-          CP = "${pkgs.coreutils}/bin/cp";
-          MKDIR = "${pkgs.coreutils}/bin/mkdir";
-          LS = "${pkgs.coreutils}/bin/ls";
-          ECHO = "${pkgs.coreutils}/bin/echo";
-          PWD = "${pkgs.coreutils}/bin/pwd";
-          CHMOD = "${pkgs.coreutils}/bin/chmod";
-          DIRNAME = "${pkgs.coreutils}/bin/dirname";
-          FIND = "${pkgs.findutils}/bin/find";
-          STACK = "${pkgs.stack}/bin/stack";
+          builder = ./builder.sh;
+          buildInputs = [ pkgs.coreutils pkgs.findutils pkgs.makeWrapper ];
+          # builder = "${pkgs.bash}/bin/bash";
+          # args = [ ./builder.sh ];
+          # STDLIB_ROOT = ./.;
+          # CP = "${pkgs.coreutils}/bin/cp";
+          # MKDIR = "${pkgs.coreutils}/bin/mkdir";
+          # LS = "${pkgs.coreutils}/bin/ls";
+          # ECHO = "${pkgs.coreutils}/bin/echo";
+          # PWD = "${pkgs.coreutils}/bin/pwd";
+          # CHMOD = "${pkgs.coreutils}/bin/chmod";
+          # DIRNAME = "${pkgs.coreutils}/bin/dirname";
+          # FIND = "${pkgs.findutils}/bin/find";
+          # STACK = "${pkgs.stack}/bin/stack";
           AGDA = "${agda.outputs.packages.x86_64-linux.agda}";
+          # WRAPPROGRAM = "${pkgs.makeWrapper}";
           LOCALE_ARCHIVE = "${pkgs.glibcLocalesUtf8}/lib/locale/locale-archive";
           LOCALE = "${pkgs.locale}/bin/locale";
           LC_ALL= "en_US.utf8";
