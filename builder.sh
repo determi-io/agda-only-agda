@@ -3,36 +3,28 @@
 set -e
 
 # create output directories
-$MKDIR -p $out/bin    # for the binary
-$MKDIR -p $out/share  # for the primitive agda
+$MKDIR -p ${out}/bin    # for the binary
+$MKDIR -p ${out}/share/datadir  # for the primitive agda
 
 # copy the binary
-$CP $AGDA/bin/agda $out/bin
+$CP ${AGDA}/bin/agda ${out}/bin
 
+primitive_file="$($FIND $AGDA -name Primitive.agda)"
+direct_dir="$($DIRNAME $primitive_file)"
+lib_dir="${direct_dir}/../.."
 
+$ECHO "found agda library dir: $lib_dir"
 
-# # step 1: change to root of stdlib
-# cd $out
+# copy the libdir
+$CP -r $lib_dir $out/share/datadir/lib
+datadir=$out/share/datadir
 
-# # $MKDIR -p $out/local-stack-root
+# change permissions
+$CHMOD -R u+w $out
 
-# # $ECHO "hello?"
-# # $ECHO $out
-# $ECHO $src
-# $ECHO $out
-# $LS -la $out
-# $CHMOD -R u+w $out
-# # $PWD
+$LS -la $datadir/lib/prim/Agda
 
-# $LOCALE -a
-
-# # $LS -la
-
-# # # step 2: use stack to generate the "Everything.agda" file
-# # $STACK run GenerateEverything --stack-root $out/local-stack-root --stack-yaml stack-9.2.8.yaml
-
-# # step 3: typecheck the file with agda
-# $AGDA $out/src/Everything.agda
-# # $AGDA $out/src/Text/Tabular/Vec.agda
-
-
+# run agda on each file
+$ECHO "running agda..."
+Agda_datadir=$datadir $FIND $datadir -type f -name "*.agda" -exec $out/bin/agda --no-libraries --local-interfaces "{}" \;
+$ECHO "running agda done"

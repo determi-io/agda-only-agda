@@ -5,13 +5,19 @@
   {
     nixpkgs.url = "github:NixOS/nixpkgs/038b2922be3fc096e1d456f93f7d0f4090628729";
     flake-utils.url = "github:numtide/flake-utils";
-    agda = "github:determi-io/agda";
+    agda =
+    {
+      type = "github";
+      owner = "determi-io";
+      repo = "agda";
+      ref = "freeze-2023-10-25";
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, agda }:
 
     flake-utils.lib.eachDefaultSystem (system:
-      let a = "a";
+      let pkgs = import nixpkgs { inherit system; };
       in
       {
         packages.default = derivation {
@@ -25,8 +31,10 @@
           ECHO = "${pkgs.coreutils}/bin/echo";
           PWD = "${pkgs.coreutils}/bin/pwd";
           CHMOD = "${pkgs.coreutils}/bin/chmod";
+          DIRNAME = "${pkgs.coreutils}/bin/dirname";
+          FIND = "${pkgs.findutils}/bin/find";
           STACK = "${pkgs.stack}/bin/stack";
-          AGDA = "${agda.outputs.packages.x86_64-linux.Agda}/bin/agda";
+          AGDA = "${agda.outputs.packages.x86_64-linux.agda}";
           LOCALE_ARCHIVE = "${pkgs.glibcLocalesUtf8}/lib/locale/locale-archive";
           LOCALE = "${pkgs.locale}/bin/locale";
           LC_ALL= "en_US.utf8";
